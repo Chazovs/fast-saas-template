@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -32,6 +34,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
+
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: \App\Entity\Collection::class, orphanRemoval: true)]
+    private Collection $collections;
+
+    public function __construct()
+    {
+        $this->collections = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -111,6 +121,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Collection>
+     */
+    public function getCollections(): Collection
+    {
+        return $this->collections;
+    }
+
+    public function addCollection(Collection $collection): self
+    {
+        if (!$this->collections->contains($collection)) {
+            $this->collections->add($collection);
+            $collection->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCollection(Collection $collection): self
+    {
+        if ($this->collections->removeElement($collection)) {
+            // set the owning side to null (unless already changed)
+            if ($collection->getOwner() === $this) {
+                $collection->setOwner(null);
+            }
+        }
 
         return $this;
     }

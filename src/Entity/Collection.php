@@ -16,6 +16,10 @@ class Collection
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\ManyToOne(inversedBy: 'collections')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $owner = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -29,6 +33,18 @@ class Collection
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }
