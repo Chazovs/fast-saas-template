@@ -3,12 +3,19 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Collection;
+use App\Repository\ExtendedEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class CollectionCrudController extends AbstractCrudController
@@ -91,5 +98,31 @@ class CollectionCrudController extends AbstractCrudController
         }
 
         parent::updateEntity($entityManager, $entityInstance);
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        $services = parent::getSubscribedServices();
+
+        $services[EntityRepository::class] = ExtendedEntityRepository::class;
+
+        return $services;
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        /** @var ExtendedEntityRepository $entityRepository */
+        $entityRepository = $this->container->get(EntityRepository::class);
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        return $entityRepository->createQueryBuilderWithWhere(
+            $searchDto,
+            $entityDto,
+            $fields,
+            $filters,
+            ['entity.owner = ' . $user->getId()]
+        );
     }
 }
