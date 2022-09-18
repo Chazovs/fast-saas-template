@@ -16,9 +16,11 @@
         "symfony/dotenv": "*",
         "symfony/flex": "*",
         "symfony/framework-bundle": "*",
+        "symfony/mailer": "6.1.*",
         "symfony/proxy-manager-bridge": "6.1.*",
         "symfony/runtime": "*",
-        "symfony/yaml": "*"
+        "symfony/yaml": "*",
+        "symfonycasts/verify-email-bundle": "^1.11"
     },
     "config": {
         "allow-plugins": {
@@ -73,6 +75,8 @@
         }
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.45"
+        "symfony/maker-bundle": "^1.45",
+        "symfony/stopwatch": "6.1.*",
+        "symfony/web-profiler-bundle": "6.1.*"
     }
 }

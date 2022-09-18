@@ -12,6 +12,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ClothingCompanyController extends AbstractDashboardController
 {
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
@@ -48,6 +52,5 @@ class ClothingCompanyController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
         yield MenuItem::linkToCrud('Collection', 'fas fa-map-marker-alt', Collection::class);
-        yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'homepage');
     }
 }
